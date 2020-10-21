@@ -1,70 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import {Task} from '../task';
+import { InjectModel } from '@nestjs/sequelize';
+import {Task} from '../../database/models/task.Model';
 
+//Only for testing crud without ORM
+//Remove this as you use a ORM
 @Injectable()
-export class TaskService {
- private tasks: Task[] =[
-    {id:1, description:"Tarefa 1", completed: false},
-    {id:2, description:"Tarefa 1", completed: true},
-    {id:3, description:"Tarefa 2", completed: false},
-    {id:4, description:"Tarefa 3", completed: true},
-    {id:5, description:"Tarefa 4", completed: false},
-    {id:6, description:"Tarefa 5", completed: true},
-    {id:7, description:"Tarefa 6", completed: true},
-    {id:9, description:"Tarefa 7", completed: false},
-    {id:10, description:"Tarefa 8", completed: true},
-    {id:11, description:"Tarefa 9", completed: true},
-    {id:12, description:"Tarefa 10", completed: false},
-    {id:13, description:"Tarefa 11", completed: true},
-    {id:14, description:"Tarefa 12", completed: false},
+  export class TasksService {
+    constructor(
+      @InjectModel(Task)
+      private taskModel: typeof Task,
+    ){}
 
-  ]
+  /*Formerly, I used the class Task to helping
+    the storageNow, I'm importing a TaskModel into the
+    TaskService And Letting NestJs know that I wanna a
+    new Dependency Injection : taskModel*/
 
-  getAll(){
-    return this.tasks;
-  }
-/*
-  findByIndex(id:number){
-    const found = this.tasks.find(task=>task.id ===id );
-    return found;
+  async findAll(): Promise<Task[]>{
+    return this.taskModel.findAll()
 
-  }*/
-
-  getById(id:number){
-    const task = this.tasks.find(task=>task.id==id);
-    return task;
   }
 
-  create(task:Task){
-    this.tasks.push(task);
-
-    let lastId =0;
-
-    if(this.tasks.length>0){
-      lastId =this.tasks[this.tasks.length -1].id;
-    }
-
-    else {
-      task.id = lastId +1;
-      this.tasks.push(task);
-    }
-    //console.log({message:`New task ${task.id}  : has just created!`});
-    return task;
+  async findOne(id:number): Promise<Task> {
+    return this.taskModel.findOne({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(task:Task){
-    const taskToUpdate = this.getById(task.id);
+  async create(id:number){
 
-    if(taskToUpdate){
-      taskToUpdate.description = task.description;
-      taskToUpdate.completed = task.completed;
-    }
-    return taskToUpdate;
   }
 
-  delete(id:number){
-    const deletingIndex = this.tasks.findIndex(tasks=>tasks.id === id);
-    this.tasks.splice(deletingIndex,1);
+
+  async update(task:Task){
+
+  }
+
+  async remove(id: number):Promise<void>{
+    const user = await this.findOne(id);
+    await user.destroy();
   }
 
 }

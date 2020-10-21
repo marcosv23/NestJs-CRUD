@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import {SequelizeModule} from '@nestjs/sequelize';
-//import { databaseProviders} from './database.provider';
-
+import {Task} from '../models/task.Model';
 @Module({
   imports:[
     SequelizeModule.forRoot({
@@ -12,8 +11,8 @@ import {SequelizeModule} from '@nestjs/sequelize';
       password:'porangaba2305',
       database: 'test',
       models: [],
-    })
+    }),
   ],
 })
 
-export class SequelizeModule;
+export class SequelizeGeneralModule{};
